@@ -1,0 +1,246 @@
+[gd_scene format=3 uid="uid://dbhr2e7e2w8q1"]
+
+[ext_resource type="Shader" uid="uid://cwtcxejxd4jvd" path="res://water.gdshader" id="1_omxto"]
+[ext_resource type="Texture2D" uid="uid://del3mkhar0upi" path="res://voronoi2.png" id="2_20b8l"]
+[ext_resource type="Texture2D" uid="uid://cfcodpvg3agl6" path="res://voronoi.jpg" id="2_xa4mu"]
+[ext_resource type="Texture2D" uid="uid://ccmar6pl451of" path="res://FlowMap-2.png" id="3_20b8l"]
+[ext_resource type="Texture2D" uid="uid://dhlai4fk6cg2p" path="res://water-normal-map.png" id="4_stsm6"]
+[ext_resource type="Shader" uid="uid://c58vtua5yitd6" path="res://sand_2.gdshader" id="6_stsm6"]
+[ext_resource type="Texture2D" uid="uid://d4ky0g5qvxu1t" path="res://LottesGrain5.png" id="7_moyd8"]
+[ext_resource type="Texture2D" uid="uid://qxnnq0d12iqe" path="res://sand_steep_horizontal.jpg" id="7_stsm6"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_omxto"]
+sky_top_color = Color(0.16862744, 0.6007353, 0.8117647, 1)
+sky_horizon_color = Color(0.46666667, 0.93333334, 0.93333334, 1)
+ground_bottom_color = Color(0.46679688, 0.93359375, 0.93359375, 1)
+ground_horizon_color = Color(0.46666667, 0.93333334, 0.93333334, 1)
+
+[sub_resource type="Sky" id="Sky_xa4mu"]
+sky_material = SubResource("ProceduralSkyMaterial_omxto")
+
+[sub_resource type="Environment" id="Environment_20b8l"]
+background_mode = 2
+sky = SubResource("Sky_xa4mu")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_tmeqk"]
+noise_type = 2
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_moyd8"]
+noise = SubResource("FastNoiseLite_tmeqk")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bt5qc"]
+render_priority = 0
+shader = ExtResource("1_omxto")
+shader_parameter/roughness = 0.0499999988824
+shader_parameter/specular = 0.18999999575312
+shader_parameter/base_color = Color(0.17944336, 0.5467838, 0.765625, 1)
+shader_parameter/coast_color = Color(0.34936523, 0.828125, 0.7944622, 1)
+shader_parameter/coast_depth = 2.0
+shader_parameter/foam_color = Color(1, 1, 1, 1)
+shader_parameter/foam_texture = ExtResource("2_xa4mu")
+shader_parameter/foam_size = 100.0
+shader_parameter/foam_depth = 4.0
+shader_parameter/foam_height = 10.35
+shader_parameter/foam_wave_noise_texture = SubResource("NoiseTexture2D_moyd8")
+shader_parameter/waves_count = 2.0
+shader_parameter/flow_voronoi_texture = ExtResource("2_20b8l")
+shader_parameter/water_normals_texture = ExtResource("4_stsm6")
+shader_parameter/water_normals_size = 10.0
+shader_parameter/water_normals_speed = Vector2(-0.01, 0.02)
+shader_parameter/water_flow_texture = ExtResource("3_20b8l")
+shader_parameter/water_flow_size = 1.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_y201y"]
+material = SubResource("ShaderMaterial_bt5qc")
+size = Vector2(1000, 1000)
+subdivide_width = 1000
+subdivide_depth = 1000
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_omxto"]
+render_priority = 0
+shader = ExtResource("6_stsm6")
+shader_parameter/roughness = 0.499999988824
+shader_parameter/specular = 0.66999998502416
+shader_parameter/base_color = Color(0.8862745, 0.7882353, 0.49019608, 1)
+shader_parameter/border_color = Color(1, 1, 1, 1)
+shader_parameter/wet_color = Color(0.72265625, 0.6053465, 0.27381897, 1)
+shader_parameter/grain_texture = ExtResource("7_moyd8")
+shader_parameter/grain_size = 500.0
+shader_parameter/sand_steep_texture = ExtResource("7_stsm6")
+shader_parameter/sand_steep_size = 50.0
+shader_parameter/water_height = 2.58
+shader_parameter/rim_power = 2.0
+shader_parameter/rim_strength = 0.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bt5qc"]
+albedo_color = Color(0.22470863, 0.4140625, 0.10675049, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y201y"]
+albedo_color = Color(0.88671875, 0.7871361, 0.48838806, 1)
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_moyd8"]
+albedo_color = Color(0.40234375, 0.3385439, 0.14459229, 1)
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tmeqk"]
+albedo_color = Color(0.40234375, 0.3385439, 0.14459229, 1)
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k7t1n"]
+albedo_color = Color(0.40234375, 0.3385439, 0.14459229, 1)
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_txgcc"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b0edg"]
+albedo_color = Color(1, 0.16015625, 0.16015625, 1)
+
+[node name="Node3D" type="Node3D" unique_id=781420486]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1842632355]
+environment = SubResource("Environment_20b8l")
+
+[node name="SeaMesh" type="MeshInstance3D" parent="." unique_id=2050754016]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.654, 0)
+mesh = SubResource("PlaneMesh_y201y")
+
+[node name="SandBeach" type="CSGSphere3D" parent="." unique_id=728520429]
+transform = Transform3D(7.165, 0, 0, 0, 0.805, 0, 0, 0, 3.42, -1.0976603, -53.756977, 8.616906)
+radius = 68.64669
+radial_segments = 32
+material = SubResource("ShaderMaterial_omxto")
+
+[node name="CSGSphere3D7" type="CSGSphere3D" parent="." unique_id=1254014654]
+transform = Transform3D(7.1128335, 0, -0.24632223, 0, 1.2900001, 0, 0.8630311, 0, 2.0301108, 39.264572, -36.60277, -19.11721)
+radius = 35.494045
+radial_segments = 32
+material = SubResource("StandardMaterial3D_bt5qc")
+
+[node name="CSGSphere3D13" type="CSGSphere3D" parent="." unique_id=1305581987]
+transform = Transform3D(7.1128335, 0, -0.24632223, 0, 1.2900001, 0, 0.8630311, 0, 2.0301108, 16.473286, -40.20704, 4.3142624)
+radius = 35.494045
+radial_segments = 32
+material = SubResource("ShaderMaterial_omxto")
+
+[node name="CSGSphere3D3" type="CSGSphere3D" parent="." unique_id=735610174]
+transform = Transform3D(1, 0, 0, 0, 0.31, 0, 0, 0, 1, 101.78574, -4.180333, -11.524826)
+radius = 31.657324
+material = SubResource("StandardMaterial3D_y201y")
+
+[node name="CSGSphere3D4" type="CSGSphere3D" parent="." unique_id=1827338002]
+transform = Transform3D(1, 0, 0, 0, 0.38, 0, 0, 0, 1, 8.271446, -3.8803933, 62.02849)
+radius = 11.025126
+material = SubResource("StandardMaterial3D_moyd8")
+
+[node name="CSGSphere3D22" type="CSGSphere3D" parent="." unique_id=1386633492]
+transform = Transform3D(0.906831, 0, -0.42149433, 0, 0.43, 0, 0.42149433, 0, 0.906831, 15.297173, -1.9223306, 52.61896)
+radius = 11.025126
+material = SubResource("StandardMaterial3D_moyd8")
+
+[node name="CSGSphere3D10" type="CSGSphere3D" parent="." unique_id=911927912]
+transform = Transform3D(0.9827377, 0, -0.40793455, 0, 0.81, 0, 0.18500434, 0, 2.1669366, -7.3042603, -3.692152, 30.72068)
+radius = 11.025126
+material = SubResource("StandardMaterial3D_tmeqk")
+
+[node name="CSGSphere3D20" type="CSGSphere3D" parent="." unique_id=894049859]
+transform = Transform3D(0.9827377, 0, -0.40793455, 0, 0.81, 0, 0.18500434, 0, 2.1669366, 297.41733, -3.692152, 278.62195)
+radius = 11.025126
+material = SubResource("StandardMaterial3D_tmeqk")
+
+[node name="CSGSphere3D21" type="CSGSphere3D" parent="." unique_id=707327783]
+transform = Transform3D(4.9136887, 0, -0.92502165, 0, 1, 0, 0.92502165, 0, 4.9136887, 342.26727, -4.724327, 278.62195)
+radius = 11.025126
+material = SubResource("StandardMaterial3D_tmeqk")
+
+[node name="CSGSphere3D14" type="CSGSphere3D" parent="." unique_id=145372425]
+transform = Transform3D(0.9827377, 0, -0.40793467, 0.09073932, 0.9760323, 1.06282, 0.16122344, -0.5493278, 1.8883929, 61.94723, 6.9123397, 33.420235)
+radius = 11.025126
+material = SubResource("StandardMaterial3D_tmeqk")
+
+[node name="CSGSphere3D17" type="CSGSphere3D" parent="." unique_id=1342718104]
+transform = Transform3D(-0.44983912, 1.9999309, -0.049594775, 0.18373029, 0.2624309, 2.1520138, 0.87400687, 0.97416943, -0.47791368, 44.103146, 0.7361636, 20.923157)
+radius = 13.233156
+material = SubResource("StandardMaterial3D_tmeqk")
+
+[node name="CSGSphere3D18" type="CSGSphere3D" parent="." unique_id=825100401]
+transform = Transform3D(0.07822469, 2.2130766, -0.2939806, 0.18373029, 0.2624309, 2.1520138, 0.97985923, -0.22588295, -0.3800481, 23.136179, 0.7361636, 15.911377)
+radius = 13.233156
+material = SubResource("StandardMaterial3D_tmeqk")
+
+[node name="CSGSphere3D16" type="CSGSphere3D" parent="." unique_id=981010790]
+transform = Transform3D(-0.9957284, 0.06181802, 0.06376084, 0.057337373, 0.24094509, 2.0683653, 0.07236896, 0.6596581, -0.7614611, 61.94723, 3.5091796, 82.93341)
+radius = 11.025126
+material = SubResource("StandardMaterial3D_tmeqk")
+
+[node name="CSGSphere3D19" type="CSGSphere3D" parent="." unique_id=964987725]
+transform = Transform3D(-0.9957284, 0.06181802, 0.06376084, 0.057337373, 0.24094509, 2.0683653, 0.07236896, 0.6596581, -0.7614611, 7.215, -2.192906, 30.01601)
+radius = 11.025126
+material = SubResource("StandardMaterial3D_tmeqk")
+
+[node name="CSGSphere3D15" type="CSGSphere3D" parent="." unique_id=402794572]
+transform = Transform3D(0.98273766, -1.1101365e-08, -0.40793467, -0.009135588, 0.7440911, -0.107004344, 0.18477869, 0.03678845, 2.1642928, 61.94723, 18.676327, 61.32376)
+radius = 11.025126
+material = SubResource("StandardMaterial3D_tmeqk")
+
+[node name="CSGSphere3D24" type="CSGSphere3D" parent="." unique_id=2114051510]
+transform = Transform3D(0.7645857, 0.028499134, 1.4186655, -0.009135589, 0.7440911, -0.10700435, -0.6444573, 0.023263477, 1.6846251, 54.182842, 21.76775, 33.188854)
+radius = 11.025126
+material = SubResource("StandardMaterial3D_tmeqk")
+
+[node name="CSGSphere3D5" type="CSGSphere3D" parent="." unique_id=660127530]
+transform = Transform3D(1, 0, 0, 0, 0.31, 0, 0, 0, 1, -4.4730115, -2.3229039, 69.47911)
+radius = 0.8424417
+material = SubResource("StandardMaterial3D_k7t1n")
+
+[node name="CSGSphere3D8" type="CSGSphere3D" parent="." unique_id=1746296603]
+transform = Transform3D(1, 0, 0, 0, 0.88, 0, 0, 0, 1, 1.6325016, -2.4736528, 71.03077)
+radius = 0.8424417
+material = SubResource("StandardMaterial3D_k7t1n")
+
+[node name="CSGSphere3D11" type="CSGSphere3D" parent="." unique_id=2126589613]
+transform = Transform3D(1, 0, 0, 0, 0.88, 0, 0, 0, 1, -0.7416229, -2.6716795, 69.24343)
+radius = 0.8424417
+material = SubResource("StandardMaterial3D_k7t1n")
+
+[node name="CSGSphere3D12" type="CSGSphere3D" parent="." unique_id=554517470]
+transform = Transform3D(1, 0, 0, 0, 0.88, 0, 0, 0, 1, -0.7416229, -2.789938, 71.147484)
+radius = 0.8424417
+material = SubResource("StandardMaterial3D_k7t1n")
+
+[node name="CSGSphere3D9" type="CSGSphere3D" parent="." unique_id=64972779]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3088722, -2.798778, 70.03183)
+radius = 1.5019382
+material = SubResource("StandardMaterial3D_k7t1n")
+
+[node name="CSGSphere3D23" type="CSGSphere3D" parent="." unique_id=1665054058]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.57154083, -3.5625973, 64.65876)
+radius = 2.4694386
+material = SubResource("StandardMaterial3D_k7t1n")
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="." unique_id=699677241]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 317.83392, 15.957196, 276.71445)
+radius = 6.498047
+height = 68.31476
+sides = 32
+material = SubResource("StandardMaterial3D_txgcc")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=1175580837]
+transform = Transform3D(-0.8272324, 0.13103329, 0.54636693, 0.1095171, 0.991378, -0.07194329, -0.5510831, 0.0003227219, -0.8344503, 48.68176, 0.96156806, 44.02032)
+size = Vector3(5, 6.381714, 5)
+
+[node name="CSGSphere3D" type="CSGSphere3D" parent="." unique_id=1004226264]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.9287627, 100.073006)
+material = SubResource("StandardMaterial3D_b0edg")
+
+[node name="CSGSphere3D2" type="CSGSphere3D" parent="." unique_id=1740096151]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.580696, -1.9287627, 100.073006)
+material = SubResource("StandardMaterial3D_b0edg")
+
+[node name="CSGSphere3D25" type="CSGSphere3D" parent="." unique_id=912642294]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.682201, -1.9287627, 100.073006)
+material = SubResource("StandardMaterial3D_b0edg")
+
+[node name="CSGSphere3D26" type="CSGSphere3D" parent="." unique_id=402859023]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84.7379, -1.9287627, 121.74416)
+material = SubResource("StandardMaterial3D_b0edg")
