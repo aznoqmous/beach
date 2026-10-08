@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="Beach"
+run/main_scene="uid://dbhr2e7e2w8q1"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 

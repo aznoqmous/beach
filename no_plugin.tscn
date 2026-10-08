@@ -2,12 +2,14 @@
 
 [ext_resource type="Shader" uid="uid://cwtcxejxd4jvd" path="res://water.gdshader" id="1_omxto"]
 [ext_resource type="Texture2D" uid="uid://del3mkhar0upi" path="res://voronoi2.png" id="2_20b8l"]
-[ext_resource type="Texture2D" uid="uid://cfcodpvg3agl6" path="res://voronoi.jpg" id="2_xa4mu"]
 [ext_resource type="Texture2D" uid="uid://ccmar6pl451of" path="res://FlowMap-2.png" id="3_20b8l"]
+[ext_resource type="Texture2D" uid="uid://dth8tm08wyamj" path="res://foam-texture.png" id="3_tmeqk"]
 [ext_resource type="Texture2D" uid="uid://dhlai4fk6cg2p" path="res://water-normal-map.png" id="4_stsm6"]
 [ext_resource type="Shader" uid="uid://c58vtua5yitd6" path="res://sand_2.gdshader" id="6_stsm6"]
 [ext_resource type="Texture2D" uid="uid://d4ky0g5qvxu1t" path="res://LottesGrain5.png" id="7_moyd8"]
 [ext_resource type="Texture2D" uid="uid://qxnnq0d12iqe" path="res://sand_steep_horizontal.jpg" id="7_stsm6"]
+[ext_resource type="PackedScene" uid="uid://cy7763b2tiqag" path="res://step_decal.tscn" id="9_k7t1n"]
+[ext_resource type="Script" uid="uid://bewsprrjt754w" path="res://character.gd" id="10_k7t1n"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_omxto"]
 sky_top_color = Color(0.16862744, 0.6007353, 0.8117647, 1)
@@ -35,20 +37,21 @@ shader_parameter/roughness = 0.0499999988824
 shader_parameter/specular = 0.18999999575312
 shader_parameter/base_color = Color(0.17944336, 0.5467838, 0.765625, 1)
 shader_parameter/coast_color = Color(0.34936523, 0.828125, 0.7944622, 1)
-shader_parameter/coast_depth = 2.0
+shader_parameter/coast_depth = 3.7800000000000002
 shader_parameter/foam_color = Color(1, 1, 1, 1)
-shader_parameter/foam_texture = ExtResource("2_xa4mu")
-shader_parameter/foam_size = 100.0
-shader_parameter/foam_depth = 4.0
+shader_parameter/foam_texture = ExtResource("3_tmeqk")
+shader_parameter/foam_size = 60.0
 shader_parameter/foam_height = 10.35
-shader_parameter/foam_wave_noise_texture = SubResource("NoiseTexture2D_moyd8")
-shader_parameter/waves_count = 2.0
 shader_parameter/flow_voronoi_texture = ExtResource("2_20b8l")
+shader_parameter/foam_wave_noise_texture = SubResource("NoiseTexture2D_moyd8")
+shader_parameter/waves_count = 1.67
+shader_parameter/waves_strength = 3.0
+shader_parameter/wet_sand_color = Color(0.62890625, 0.5167841, 0.22846985, 1)
 shader_parameter/water_normals_texture = ExtResource("4_stsm6")
 shader_parameter/water_normals_size = 10.0
 shader_parameter/water_normals_speed = Vector2(-0.01, 0.02)
 shader_parameter/water_flow_texture = ExtResource("3_20b8l")
-shader_parameter/water_flow_size = 1.0
+shader_parameter/water_flow_size = 0.5
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_y201y"]
 material = SubResource("ShaderMaterial_bt5qc")
@@ -68,7 +71,7 @@ shader_parameter/grain_texture = ExtResource("7_moyd8")
 shader_parameter/grain_size = 500.0
 shader_parameter/sand_steep_texture = ExtResource("7_stsm6")
 shader_parameter/sand_steep_size = 50.0
-shader_parameter/water_height = 2.58
+shader_parameter/water_height = 100.0
 shader_parameter/rim_power = 2.0
 shader_parameter/rim_strength = 0.2
 
@@ -96,7 +99,13 @@ metallic_specular = 0.0
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b0edg"]
 albedo_color = Color(1, 0.16015625, 0.16015625, 1)
 
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qmn6i"]
+
 [node name="Node3D" type="Node3D" unique_id=781420486]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=823109051]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1842632355]
 environment = SubResource("Environment_20b8l")
@@ -107,6 +116,7 @@ mesh = SubResource("PlaneMesh_y201y")
 
 [node name="SandBeach" type="CSGSphere3D" parent="." unique_id=728520429]
 transform = Transform3D(7.165, 0, 0, 0, 0.805, 0, 0, 0, 3.42, -1.0976603, -53.756977, 8.616906)
+use_collision = true
 radius = 68.64669
 radial_segments = 32
 material = SubResource("ShaderMaterial_omxto")
@@ -119,6 +129,7 @@ material = SubResource("StandardMaterial3D_bt5qc")
 
 [node name="CSGSphere3D13" type="CSGSphere3D" parent="." unique_id=1305581987]
 transform = Transform3D(7.1128335, 0, -0.24632223, 0, 1.2900001, 0, 0.8630311, 0, 2.0301108, 16.473286, -40.20704, 4.3142624)
+use_collision = true
 radius = 35.494045
 radial_segments = 32
 material = SubResource("ShaderMaterial_omxto")
@@ -183,11 +194,6 @@ transform = Transform3D(0.98273766, -1.1101365e-08, -0.40793467, -0.009135588, 0
 radius = 11.025126
 material = SubResource("StandardMaterial3D_tmeqk")
 
-[node name="CSGSphere3D24" type="CSGSphere3D" parent="." unique_id=2114051510]
-transform = Transform3D(0.7645857, 0.028499134, 1.4186655, -0.009135589, 0.7440911, -0.10700435, -0.6444573, 0.023263477, 1.6846251, 54.182842, 21.76775, 33.188854)
-radius = 11.025126
-material = SubResource("StandardMaterial3D_tmeqk")
-
 [node name="CSGSphere3D5" type="CSGSphere3D" parent="." unique_id=660127530]
 transform = Transform3D(1, 0, 0, 0, 0.31, 0, 0, 0, 1, -4.4730115, -2.3229039, 69.47911)
 radius = 0.8424417
@@ -244,3 +250,19 @@ material = SubResource("StandardMaterial3D_b0edg")
 [node name="CSGSphere3D26" type="CSGSphere3D" parent="." unique_id=402859023]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 84.7379, -1.9287627, 121.74416)
 material = SubResource("StandardMaterial3D_b0edg")
+
+[node name="StepDecal" parent="." unique_id=1335322367 instance=ExtResource("9_k7t1n")]
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." unique_id=657880190]
+transform = Transform3D(-0.9921567, 0, 0.12500031, 0, 1, 0, -0.12500031, 0, -0.9921567, -20.374311, 1.9783542, 34.00558)
+script = ExtResource("10_k7t1n")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D" unique_id=2043059171]
+transform = Transform3D(1.0000002, 0, 0, 0, 1, 0, 0, 0, 1.0000002, 0, 0.902426, 0)
+shape = SubResource("CapsuleShape3D_qmn6i")
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="CharacterBody3D" unique_id=1677076353]
+transform = Transform3D(1.0000002, 0, 0, 0, 1, 0, 0, 0, 1.0000002, 0, 0.902426, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CharacterBody3D" unique_id=656933116]
+transform = Transform3D(1.0000001, 0, 0, 0, 1, 0, 0, 0, 1.0000001, -9.536743e-07, 0.902426, 3)

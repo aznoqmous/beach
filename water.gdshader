@@ -15,11 +15,14 @@ group_uniforms Foam;
 uniform vec4 foam_color: source_color;
 uniform sampler2D foam_texture;
 uniform float foam_size = 1.0;
-uniform float foam_depth = 1.0;
 uniform float foam_height = 0.0;
+uniform sampler2D flow_voronoi_texture;
+
+group_uniforms Waves;
 uniform sampler2D foam_wave_noise_texture;
 uniform float waves_count = 3.0;
-uniform sampler2D flow_voronoi_texture;
+uniform float waves_strength = 1.0;
+uniform vec3 wet_sand_color: source_color;
 
 group_uniforms Normals;
 uniform sampler2D water_normals_texture;
@@ -36,7 +39,7 @@ varying vec3 vOriginalVertex;
 void vertex() {
 	//VERTEX.y += sin(VERTEX.z + TIME) * 0.1;
 	vOriginalVertex = VERTEX;
-	VERTEX.y += texture(water_flow_texture, (UV + vec2(TIME, 0.0) * 0.01) / water_flow_size).r * 1.0;
+	VERTEX.y += texture(water_flow_texture, (UV + vec2(TIME, 0.0) * 0.0) / water_flow_size).r * 1.0;
 	vVertex = VERTEX;
 }
 
@@ -65,30 +68,24 @@ void fragment() {
 	float water_depth = 1.0 - saturate(abs(final_world_position.y - vVertex.y) / coast_depth);
 	ALBEDO = mix(base_color.rgb, coast_color.rgb, water_depth);
 	
-	float coast_foam_value = saturate(water_depth * coast_depth / 2.0);
-	float foam_value = texture(foam_texture, UV * foam_size + vec2(TIME, TIME / 2.0) * 0.01).r;
-	//ALBEDO = mix(ALBEDO, foam_color.rgb, saturate(foam_value));
+	float foam_displacement = + texture(foam_texture, vec2(vVertex.x + TIME * 0.1, vVertex.y + TIME * 0.1) * 0.01).r * 0.05;
+	float water_mask = mod(water_depth * waves_count - TIME * 0.2 + foam_displacement, 1.0) * smoothstep(0.0, 0.2, water_depth);
+	water_mask = pow(water_mask, waves_strength);
+	float water_egde_foam = (1.0 - step(0.01, water_mask)) * step(0.1, water_depth);
+	float foam_value = texture(foam_texture, UV * foam_size + vec2(TIME, TIME / 2.0) * 0.01 + texture(water_flow_texture, UV * 0.01).xy).r;
+	foam_value = step(1.0 - water_mask, foam_value);
+	foam_value = foam_value + water_egde_foam;
+	foam_value = saturate(foam_value);
+	ALBEDO = mix(ALBEDO, wet_sand_color, smoothstep(0.8, 1.0, water_depth));
+	ALBEDO = mix(ALBEDO, foam_color.rgb, foam_value);
+	ALPHA = 1.0 - smoothstep(0.4, 1.0, water_depth) + water_mask + water_egde_foam;
+	ALPHA = max(ALPHA, foam_value);
 	
-	float foam_depth_value = 1.0 - saturate(abs(final_world_position.y - vVertex.y) / foam_depth);
-	float foam_mask_time = mod(TIME * 0.1 - foam_depth_value * waves_count, 1.0);
-	float foam_mask_start = 0.01 + foam_mask_time;
-	float foam_mask_width = 1.0;
-	float foam_mask = double_step(coast_foam_value, foam_mask_start, foam_mask_start + foam_mask_width);
-	foam_mask = (coast_foam_value - foam_mask_start) / foam_mask_width * foam_mask;
-	foam_mask = saturate(0.01 + foam_mask + step(0.99, foam_mask_start) * (foam_depth_value + 0.1));
-	//foam_mask *= step(0.1, foam_depth_value);
-	float base = 1.0 - foam_mask;
-	foam_value = double_step(foam_value, base, 1.0);
-	//ALBEDO = mix(ALBEDO, foam_color.rgb, base);
-	ALBEDO = mix(ALBEDO, vec3(1.0) - texture(flow_voronoi_texture, UV * 200.0 - vec2(TIME, TIME / 2.0) * 0.01).rgb, 0.1 * foam_depth_value);
-	ALBEDO = mix(ALBEDO, texture(flow_voronoi_texture, UV * 200.0 + vec2(TIME, TIME / 2.0) * 0.01).rgb, 0.1 * foam_depth_value);
+	//ALBEDO = vec3(mod(water_depth * waves_count, 1.0));
+	//ALBEDO = vec3(water_mask);
 	
-	ALBEDO = mix(ALBEDO, foam_color.rgb, saturate(foam_value));
-	ALBEDO = mix(ALBEDO, foam_color.rgb, step(0.99, water_depth));
-	
-	ALBEDO = vec3(foam_mask);
-	
-	ALPHA = mix(base_color.a, 0.5, foam_depth_value);
+
+	ALBEDO = mix(ALBEDO, texture(flow_voronoi_texture, UV * 200.0 + vec2(TIME, TIME / 2.0) * 0.01).rgb, 0.05 * (1.0 - foam_value));
 }
 
 //void light() {

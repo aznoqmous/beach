@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://cy7763b2tiqag"]
+
+[ext_resource type="Texture2D" uid="uid://7e7ge0utlnbf" path="res://step.png" id="1_0jbna"]
+
+[node name="StepDecal" type="Decal" unique_id=1335322367]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+texture_albedo = ExtResource("1_0jbna")
